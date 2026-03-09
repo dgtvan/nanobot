@@ -1,7 +1,10 @@
 x-common-config: &common-config
+  image: van-nanobot:latest
   build:
     context: .
     dockerfile: Dockerfile
+    secrets:
+      - zscaler_cert
   volumes:
     - nanobot_data:/root/.nanobot
 
@@ -34,5 +37,14 @@ volumes:
   nanobot_data:
     driver_opts:
       o: bind
-      device: /mnt/d/DockerVolume/nanobot_data
+      # Override via .env if you don't want a hard-coded host path.
+      # Example .env:
+      #   NANOBOT_DATA_DEVICE=D:\\DockerVolume\\nanobot_data
+      device: ${NANOBOT_DATA_DEVICE:-/mnt/d/DockerVolume/nanobot_data}
       type: none
+
+secrets:
+  zscaler_cert:
+    # Prefer a local, untracked cert at repo root. Override via .env if needed.
+    # Example .env: ZSCALER_CERT_FILE=C:\Users\you\Downloads\zscaler.crt
+    file: ${ZSCALER_CERT_FILE:-./zscaler.crt}
