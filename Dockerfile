@@ -1,5 +1,8 @@
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
+COPY zscaler.crt /usr/local/share/ca-certificates/zscaler.crt
+RUN apt-get update && apt-get install -y ca-certificates && update-ca-certificates
+
 # Install Node.js 20 for the WhatsApp bridge
 RUN apt-get update && \
     apt-get install -y --no-install-recommends curl ca-certificates gnupg git && \
@@ -17,13 +20,13 @@ WORKDIR /app
 # Install Python dependencies first (cached layer)
 COPY pyproject.toml README.md LICENSE ./
 RUN mkdir -p nanobot bridge && touch nanobot/__init__.py && \
-    uv pip install --system --no-cache . && \
+    uv --native-tls pip install --system --no-cache . && \
     rm -rf nanobot bridge
 
 # Copy the full source and install
 COPY nanobot/ nanobot/
 COPY bridge/ bridge/
-RUN uv pip install --system --no-cache .
+RUN uv --native-tls pip install --system --no-cache .
 
 # Build the WhatsApp bridge
 WORKDIR /app/bridge
