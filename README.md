@@ -193,6 +193,20 @@ nanobot agent
 
 That's it! You have a working AI assistant in 2 minutes.
 
+## Behind Zscaler / Corporate Proxy
+
+If you sit behind Zscaler or a similar corporate TLS-inspecting proxy, Docker and some provider connections may fail unless the proxy's root certificate is trusted by containers and the build process. The repository includes a `docker-compose` secret named `zscaler_cert` that defaults to `./zscaler.crt` at the repo root.
+
+- Place your company's Zscaler (or proxy) root cert at the repository root named `zscaler.crt`, or set `ZSCALER_CERT_FILE` in a `.env` file to point to the certificate file (example Windows path):
+
+  ZSCALER_CERT_FILE=C:\Users\you\Downloads\zscaler.crt
+
+- When running Docker Compose, the secret will be mounted into the build context so the image and runtime trust the proxy.
+
+- If you prefer not to add the cert to the repo, create a local untracked cert and point `ZSCALER_CERT_FILE` to it in your environment or `.env` file.
+
+This should resolve TLS and build issues for users behind corporate proxies.
+
 ## 💬 Chat Apps
 
 Connect nanobot to your favorite chat platform.
