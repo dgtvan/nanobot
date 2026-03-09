@@ -1,5 +1,5 @@
 x-common-config: &common-config
-  image: van-nanobot:latest
+  image: dgtvan-nanobot:latest
   build:
     context: .
     dockerfile: Dockerfile
